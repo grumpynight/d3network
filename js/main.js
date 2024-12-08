@@ -413,7 +413,11 @@ function selectNode(node) {
 }
 
 function centerOnNode(selectedNode) {
-    // First, find all connected nodes
+    // Get current viewport dimensions (accounting for mobile)
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+    // Find all connected nodes
     const connectedNodes = new Set([selectedNode]);
     links.forEach(link => {
         if (link.source.id === selectedNode.id) {
@@ -423,7 +427,7 @@ function centerOnNode(selectedNode) {
         }
     });
 
-    // Calculate the bounding box of selected node and its connections
+    // Calculate the bounding box
     let minX = Infinity, maxX = -Infinity;
     let minY = Infinity, maxY = -Infinity;
 
@@ -434,29 +438,29 @@ function centerOnNode(selectedNode) {
         maxY = Math.max(maxY, node.y);
     });
 
-    // Add padding around the bounding box
-    const padding = 50;
+    // Add padding (increased for mobile)
+    const padding = Math.min(vw, vh) * 0.1; // 10% of viewport
     minX -= padding;
     maxX += padding;
     minY -= padding;
     maxY += padding;
 
-    // Calculate required scale to fit the bounding box
+    // Calculate required scale
     const boxWidth = maxX - minX;
     const boxHeight = maxY - minY;
     const scale = Math.min(
-        width / boxWidth,
-        height / boxHeight,
+        vw / boxWidth,
+        vh / boxHeight,
         2  // Maximum zoom level
-    );
+    ) * 0.9; // Slightly reduce scale to ensure visibility
 
-    // Calculate center of the bounding box
+    // Calculate center
     const centerX = (minX + maxX) / 2;
     const centerY = (minY + maxY) / 2;
 
-    // Calculate translation to center the bounding box
-    const x = width/2 - centerX * scale;
-    const y = height/2 - centerY * scale;
+    // Calculate translation
+    const x = vw/2 - centerX * scale;
+    const y = vh/2 - centerY * scale;
 
     // Animate to the new view
     svg.transition()
