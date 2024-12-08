@@ -212,6 +212,7 @@ Promise.all([
     console.error("Error loading or processing data:", error);
 });
 
+
 // Helper functions
 function calculateLabelPosition(d, nodes, existingLabels) {
     const nodeRadius = 80;
