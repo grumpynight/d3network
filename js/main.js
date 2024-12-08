@@ -8,6 +8,75 @@ let simulation;
 let validNodeNames = new Set();
 let drag; // Declare drag variable
 
+function findConnectedComponents() {
+    const visited = new Set();
+    const components = [];
+    
+    function dfs(nodeId, component) {
+        visited.add(nodeId);
+        component.add(nodeId);
+        
+        links.forEach(link => {
+            const neighborId = link.source.id === nodeId ? link.target.id : 
+                             link.target.id === nodeId ? link.source.id : null;
+            if (neighborId && !visited.has(neighborId)) {
+                dfs(neighborId, component);
+            }
+        });
+    }
+    
+    nodes.forEach(node => {
+        if (!visited.has(node.id)) {
+            const component = new Set();
+            dfs(node.id, component);
+            components.push(component);
+        }
+    });
+    
+    return components;
+}
+
+function disconnectedNodesForce(alpha) {
+    const components = findConnectedComponents();
+    const mainComponent = components.reduce((max, curr) => 
+        curr.size > max.size ? curr : max, components[0]);
+    
+    let centerX = 0, centerY = 0, count = 0;
+    mainComponent.forEach(nodeId => {
+        const node = nodes.find(n => n.id === nodeId);
+        centerX += node.x;
+        centerY += node.y;
+        count++;
+    });
+    centerX /= count;
+    centerY /= count;
+    
+    let maxRadius = 0;
+    mainComponent.forEach(nodeId => {
+        const node = nodes.find(n => n.id === nodeId);
+        const dx = node.x - centerX;
+        const dy = node.y - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        maxRadius = Math.max(maxRadius, distance);
+    });
+    
+    const boundaryRadius = maxRadius + 300;
+    
+    nodes.forEach(node => {
+        if (!mainComponent.has(node.id)) {
+            const dx = node.x - centerX;
+            const dy = node.y - centerY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance > boundaryRadius) {
+                const scale = (boundaryRadius / distance);
+                node.x = centerX + dx * scale;
+                node.y = centerY + dy * scale;
+            }
+        }
+    });
+}
+
 // SVG setup
 const svg = d3.select("svg")
     .attr("width", width)
@@ -66,6 +135,7 @@ function processData(pointsText, linksText) {
         .force("collision", d3.forceCollide()
             .radius(150)
             .strength(0.5))
+        .force("disconnected", disconnectedNodesForce) // Add this line
         .alpha(0.7)
         .alphaDecay(0.002)
         .velocityDecay(0.2);
