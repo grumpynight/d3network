@@ -413,7 +413,10 @@ function selectNode(node) {
 }
 
 function centerOnNode(selectedNode) {
-    // Get current viewport dimensions (accounting for mobile)
+    // Only apply mobile-specific zoom behavior if on mobile
+    const isMobile = window.innerWidth < 768;
+    
+    // Get current viewport dimensions
     const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
     const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
@@ -427,47 +430,60 @@ function centerOnNode(selectedNode) {
         }
     });
 
-    // Calculate the bounding box
-    let minX = Infinity, maxX = -Infinity;
-    let minY = Infinity, maxY = -Infinity;
+    if (isMobile) {
+        // Calculate the bounding box for mobile view
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
 
-    connectedNodes.forEach(node => {
-        minX = Math.min(minX, node.x);
-        maxX = Math.max(maxX, node.x);
-        minY = Math.min(minY, node.y);
-        maxY = Math.max(maxY, node.y);
-    });
+        connectedNodes.forEach(node => {
+            minX = Math.min(minX, node.x);
+            maxX = Math.max(maxX, node.x);
+            minY = Math.min(minY, node.y);
+            maxY = Math.max(maxY, node.y);
+        });
 
-    // Add padding (increased for mobile)
-    const padding = Math.min(vw, vh) * 0.1; // 10% of viewport
-    minX -= padding;
-    maxX += padding;
-    minY -= padding;
-    maxY += padding;
+        // Add more padding for mobile
+        const padding = Math.min(vw, vh) * 0.15; // 15% of viewport
+        minX -= padding;
+        maxX += padding;
+        minY -= padding;
+        maxY += padding;
 
-    // Calculate required scale
-    const boxWidth = maxX - minX;
-    const boxHeight = maxY - minY;
-    const scale = Math.min(
-        vw / boxWidth,
-        vh / boxHeight,
-        2  // Maximum zoom level
-    ) * 0.9; // Slightly reduce scale to ensure visibility
+        // Calculate required scale for mobile
+        const boxWidth = maxX - minX;
+        const boxHeight = maxY - minY;
+        const scale = Math.min(
+            vw / boxWidth,
+            vh / boxHeight,
+            1.5  // Lower maximum zoom level for mobile
+        ) * 0.9; // Slightly reduce scale
 
-    // Calculate center
-    const centerX = (minX + maxX) / 2;
-    const centerY = (minY + maxY) / 2;
+        // Calculate center
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
 
-    // Calculate translation
-    const x = vw/2 - centerX * scale;
-    const y = vh/2 - centerY * scale;
+        // Calculate translation
+        const x = vw/2 - centerX * scale;
+        const y = vh/2 - centerY * scale;
 
-    // Animate to the new view
-    svg.transition()
-        .duration(750)
-        .call(zoom.transform, d3.zoomIdentity
-            .translate(x, y)
-            .scale(scale));
+        // Animate to the new view
+        svg.transition()
+            .duration(750)
+            .call(zoom.transform, d3.zoomIdentity
+                .translate(x, y)
+                .scale(scale));
+    } else {
+        // Desktop behavior - center on node without extreme zoom
+        const scale = d3.zoomTransform(svg.node()).k; // maintain current scale
+        const x = vw/2 - selectedNode.x * scale;
+        const y = vh/2 - selectedNode.y * scale;
+
+        svg.transition()
+            .duration(750)
+            .call(zoom.transform, d3.zoomIdentity
+                .translate(x, y)
+                .scale(scale));
+    }
 }
 
 function highlightNodeAndConnections(d) {
