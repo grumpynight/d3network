@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&display=swap');
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+svg {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+}
+
+.links line {
+    stroke-opacity: 0.6;
+    stroke-width: 4px;
+    transition: all 0.3s;
+}
+
+.relationship-1 {
+    stroke: #4CAF50;  /* Green for friendship */
+}
+
+.relationship-2 {
+    stroke: #2196F3;  /* Blue for family */
+}
+
+.relationship-3 {
+    stroke: #E91E63;  /* Pink for romantic */
+}
+
+.node-image {
+    object-fit: cover;
+    width: 160px;
+    height: 160px;
+}
+
+.node-circle {
+    fill: none;
+    stroke: #808080;
+    stroke-width: 2px;
+    r: 80;
+}
+
+.node-label {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 26px;
+    fill: #333333;
+    opacity: 0;
+    transition: opacity 0.3s;
+    paint-order: stroke fill;
+    background: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.node.highlighted .node-label {
+    opacity: 1;  /* Show labels for highlighted nodes */
+}
+
+.links line {
+    transition: all 0.3s;
+    stroke-opacity: 0.2;  /* Reduced default opacity */
+}
+
+.node-circle {
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.node image {
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.node.faded .node-circle,
+.node.faded image {
+    opacity: 0.2;
+}
+
+.links line.faded {
+    stroke-opacity: 0.05;
+}
+
+.node.highlighted .node-circle {
+    stroke-width: 3px;
+}
+
+.links line.highlighted {
+    stroke-opacity: 0.8;
+    stroke-width: 5px;
+}
+
+.node-label-background {
+    fill: white;
+    opacity: 0.95;
+}
+
+.node.highlighted .node-label-background {
+    opacity: 0.9;
+}
+
+.node-label, .node-label-background {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.label-group.visible .node-label,
+.label-group.visible .node-label-background {
+    opacity: 1;
+}
+
+.search-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    width: 250px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;  /* Display text as uppercase */
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.search-result-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    text-transform: uppercase;  /* Display suggestions as uppercase */
+}
+
+.search-result-item:hover {
+    background-color: #f5f5f5;
+}
+
+.legend {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 13px;
+    min-width: 220px;
+    letter-spacing: 0.5px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.legend-color {
+    width: 30px;
+    height: 4px;
+    margin-right: 10px;
+    border-radius: 2px;
+}
+
+.links {
+    pointer-events: none;
+    z-index: 1;
+}
+
+.label-group {
+    pointer-events: none;
+    z-index: 3;
+}
+
+.node-label {
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-shadow: 
+        0px 0px 4px rgba(255, 255, 255, 0.9),
+        0px 0px 8px rgba(255, 255, 255, 0.9);
+}
+
+.search-result-item.selected {
+    background-color: #f0f0f0;
+}
