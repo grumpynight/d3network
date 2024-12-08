@@ -17,7 +17,7 @@ svg {
 
 .links line {
     stroke-opacity: 0.6;
-    stroke-width: 4px;
+    stroke-width: 6px;
     transition: all 0.3s;
 }
 
@@ -93,7 +93,7 @@ svg {
 
 .links line.highlighted {
     stroke-opacity: 0.8;
-    stroke-width: 5px;
+    stroke-width: 7px;
 }
 
 .node-label-background {
