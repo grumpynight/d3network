@@ -204,8 +204,8 @@ function createVisualization() {
 
 // Load and process data from GitHub
 Promise.all([
-    d3.text('Points.txt'),
-    d3.text('https://raw.githubusercontent.com/grumpynight/d3network/main/data/Links.txt')
+    d3.text('./Points.txt'),
+    d3.text('./Links.txt')
 ]).then(function([pointsText, linksText]) {
     processData(pointsText, linksText);
 }).catch(error => {
