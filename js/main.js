@@ -136,7 +136,7 @@ function processData(pointsText, linksText) {
             .radius(150)
             .strength(0.5))
         .force("disconnected", disconnectedNodesForce) // Add this line
-        .alpha(0.7)
+        .alpha(0.3)
         .alphaDecay(0.002)
         .velocityDecay(0.2);
 
