@@ -40,7 +40,7 @@ FELIX S. KALASHNIKOV	https://i.imgur.com/DaaUhHT.png
 KONRAD FRANK ALPHA	https://i.imgur.com/mHnDnIE.png
 MILA ROBIN WALTZ	https://i.imgur.com/0J0ZiE6.png
 MORGANA NIA REASE	https://i.imgur.com/ADx1zNe.png
-BÉATRICE IRIS KLOSSNER	https://i.imgur.com/KGSVklK.png
+BÉATRICE IRIS KLOSSNER	https://i.imgur.com/iNlZ0pK.png
 ELIANA RIVERA	https://i.imgur.com/81K5gzb.png
 BLANCA RIVERA	https://i.ibb.co/hf8D6sM/2.png
 AGLIO FRAGOLA ABBATE	https://i.ibb.co/NTL23ps/2.png
@@ -55,7 +55,6 @@ CILIEGIA ANGURIA ABBATE	https://i.ibb.co/gVXgZXQ/2.png
 ELIAS KELLERHOFF	https://i.imgur.com/bfbrfcD.png
 MARCEL ETHAN FITZGERALD	https://i.imgur.com/HsmRvW5.gif
 DAIJI MINHYUN	https://i.imgur.com/lCviX6Y.png
-JOHAN FREY ENGEL	https://i.imgur.com/9UIjjUi.jpeg
 EVA MARIA NAVARRO	https://i.imgur.com/9icdGIs.png
 HANEUL CHOE	https://i.imgur.com/r3b9GRD.jpeg
 DANIEL LOWE	https://imgur.com/a7qyahQ.png
@@ -108,4 +107,3 @@ EMILIA KALASHNIKOVA	https://i.imgur.com/XPAdu11.png
 SASHA ALEXEEV	https://imgur.com/UtfkdA3.png
 NINA SONECHKA KALASHNIKOV	https://64.media.tumblr.com/de59b389d07b549f686d9c4062c02990/13906039d2031b1c-7b/s500x750/9686f3336ba00aa98f0dc3f67f8ae11a36d8cb8e.png
 SOFIE CHANG	https://i.ibb.co/xz8jJTQ/sofie1.png
-JOSHUA CHANG
