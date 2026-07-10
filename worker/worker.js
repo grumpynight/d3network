@@ -206,17 +206,23 @@ function findLinkIndex(rows, a, b) {
 // Pure per-action field validation; throws ValidationError on malformed input
 function cleanFields(action, payload) {
     if (action === 'add_character') {
-        const fields = {
+        // Links are optional: new characters may form their own group that
+        // connects to nobody yet ("link" is the legacy single-link shape)
+        const rawLinks = payload.links || (payload.link ? [payload.link] : []);
+        if (!Array.isArray(rawLinks)) throw new ValidationError('Invalid links');
+        if (rawLinks.length > 5) throw new ValidationError('Too many links (max 5)');
+        const links = rawLinks.map((l, i) => ({
+            partner: cleanName(l && l.partner, `link ${i + 1} partner`),
+            type: cleanLinkType(l && l.type),
+        }));
+        if (new Set(links.map(l => l.partner)).size !== links.length) {
+            throw new ValidationError('Duplicate link partners');
+        }
+        return {
             name: cleanName(payload.name, 'name'),
             image: cleanImageUrl(payload.image),
+            links,
         };
-        if (payload.link && (payload.link.partner || payload.link.type)) {
-            fields.link = {
-                partner: cleanName(payload.link.partner, 'link partner'),
-                type: cleanLinkType(payload.link.type),
-            };
-        }
-        return fields;
     }
     if (action === 'change_image') {
         return {
@@ -261,23 +267,25 @@ async function handleSubmission(body, env) {
         const { name, image } = fields;
         if (names.has(name)) throw new ValidationError(`Character "${name}" already exists`);
         pointRows.push([name, image]);
-        const files = [{ path: POINTS_PATH, text: serializeRows(pointRows), base: points }];
 
-        let linkNote = '';
-        if (fields.link) {
-            const { partner, type } = fields.link;
-            requireExisting(partner, 'link partner');
+        const files = [{ path: POINTS_PATH, text: serializeRows(pointRows), base: points }];
+        let linkNote = 'Be ryšių.';
+        if (fields.links.length > 0) {
+            fields.links.forEach(l => requireExisting(l.partner, 'link partner'));
             const links = await gh.getFile(LINKS_PATH, BASE_BRANCH);
             const linkRows = parseRows(links.text);
-            linkRows.push([name, partner, type]);
+            fields.links.forEach(l => linkRows.push([name, l.partner, l.type]));
             files.push({ path: LINKS_PATH, text: serializeRows(linkRows), base: links });
-            linkNote = `\n\nSu pradiniu ryšiu: **${name}** – **${partner}** (${LINK_TYPES[type]})`;
+            linkNote = 'Ryšiai:\n' + fields.links
+                .map(l => `- **${name}** – **${l.partner}** (${LINK_TYPES[l.type]})`)
+                .join('\n');
         }
+
         change = {
             files,
             slug: name,
             title: `Naujas veikėjas: ${name}${suffix}`,
-            body: `Siūlomas naujas veikėjas **${name}**.\n\nNuotrauka: ${image}${linkNote}`,
+            body: `Siūlomas naujas veikėjas **${name}**.\n\nNuotrauka: ${image}\n\n${linkNote}`,
         };
     } else if (action === 'change_image') {
         const { name, image } = fields;

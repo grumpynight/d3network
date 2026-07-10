@@ -21,7 +21,7 @@ const MAX_IMAGE_HEIGHT = 640;
 
     // Which fields each action needs (rows are marked with data-field)
     const FIELDS = {
-        add_character: ['name', 'image', 'partner-optional', 'type'],
+        add_character: ['name', 'image', 'links'],
         change_image: ['character', 'image'],
         add_link: ['source', 'target', 'type'],
         remove_link: ['source', 'target'],
@@ -31,8 +31,46 @@ const MAX_IMAGE_HEIGHT = 640;
         form.querySelectorAll('[data-field]').forEach(row => {
             row.style.display = FIELDS[action].includes(row.dataset.field) ? '' : 'none';
         });
+        resetLinkRows();
         setStatus('', '');
     }
+
+    // --- multi-link rows for the new-character form ---
+    const MAX_INITIAL_LINKS = 5;
+    const linkRowsBox = form.querySelector('.edit-links-rows');
+    const addLinkButton = form.querySelector('.edit-add-link');
+
+    function addLinkRow() {
+        const row = document.createElement('div');
+        row.className = 'edit-link-row';
+        row.innerHTML = `
+            <input type="text" class="link-partner" list="character-names" placeholder="IEŠKOK...">
+            <select class="link-type">
+                <option value="1">Draugai ir pažįstami</option>
+                <option value="2">Šeima</option>
+                <option value="3">Romantiniai santykiai</option>
+            </select>
+            <button type="button" class="edit-remove-link" aria-label="Pašalinti ryšį">&times;</button>`;
+        // the first row is mandatory and cannot be removed
+        if (linkRowsBox.children.length === 0) {
+            row.querySelector('.edit-remove-link').remove();
+        } else {
+            row.querySelector('.edit-remove-link').addEventListener('click', () => {
+                row.remove();
+                addLinkButton.style.display = '';
+            });
+        }
+        linkRowsBox.appendChild(row);
+        addLinkButton.style.display =
+            linkRowsBox.children.length >= MAX_INITIAL_LINKS ? 'none' : '';
+    }
+
+    function resetLinkRows() {
+        linkRowsBox.innerHTML = '';
+        addLinkRow();
+    }
+
+    addLinkButton.addEventListener('click', addLinkRow);
 
     function setStatus(kind, message) {
         statusBox.className = 'edit-status' + (kind ? ' ' + kind : '');
@@ -141,11 +179,23 @@ const MAX_IMAGE_HEIGHT = 640;
             if (knownName(name)) throw new Error(`Veikėjas „${name}“ jau egzistuoja`);
             payload.name = name;
             payload.image = requireValidImage();
-            const partner = value('partner');
-            if (partner) {
-                const partnerNode = requireCharacter(partner, 'ryšio partneris');
-                payload.link = { partner: partnerNode.name, type: checkedType() };
-            }
+            // Links are optional (new characters may form their own group
+            // that connects to nobody yet); empty rows are ignored
+            const seen = new Set();
+            payload.links = [];
+            [...linkRowsBox.querySelectorAll('.edit-link-row')].forEach(row => {
+                const partner = row.querySelector('.link-partner').value.trim();
+                if (!partner) return;
+                const partnerNode = requireCharacter(partner, 'ryšys su veikėju');
+                if (seen.has(partnerNode.id)) {
+                    throw new Error(`Ryšys su ${titleCase(partnerNode.name)} pasikartoja`);
+                }
+                seen.add(partnerNode.id);
+                payload.links.push({
+                    partner: partnerNode.name,
+                    type: row.querySelector('.link-type').value,
+                });
+            });
         } else if (action === 'change_image') {
             const node = requireCharacter(value('character'), 'veikėjas');
             payload.name = node.name;

@@ -333,6 +333,66 @@ svg {
     border-radius: 2px;
 }
 
+.edit-links {
+    margin: 12px 0;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+}
+
+.edit-link-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.edit-link-row .link-partner {
+    flex: 1 1 50%;
+    min-width: 0;
+}
+
+.edit-form .edit-link-row .link-partner,
+.edit-form .edit-link-row .link-type {
+    display: block;
+    margin-top: 0;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.edit-link-row .link-type {
+    flex: 0 1 45%;
+    min-width: 0;
+}
+
+.edit-remove-link {
+    flex: 0 0 auto;
+    border: none;
+    background: none;
+    font-size: 20px;
+    color: #999;
+    cursor: pointer;
+    padding: 0 2px;
+}
+
+.edit-remove-link:hover { color: #c62828; }
+
+.edit-add-link {
+    margin-top: 8px;
+    border: none;
+    background: none;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    padding: 0;
+}
+
+.edit-add-link:hover { color: #000; text-decoration: underline; }
+
 .edit-image-preview {
     display: none;
     margin-top: 8px;

@@ -74,9 +74,11 @@
                 <input type="text" name="target" list="character-names" placeholder="IEŠKOK...">
             </label>
 
-            <label data-field="partner-optional">Ryšys su veikėju <span class="edit-optional">(nebūtina)</span>
-                <input type="text" name="partner" list="character-names" placeholder="IEŠKOK...">
-            </label>
+            <div data-field="links" class="edit-links">
+                <span class="edit-links-title">Ryšiai su veikėjais <span class="edit-optional">(nebūtina)</span></span>
+                <div class="edit-links-rows"></div>
+                <button type="button" class="edit-add-link">+ Pridėti dar vieną ryšį</button>
+            </div>
 
             <fieldset data-field="type" class="edit-types">
                 <legend>Ryšio tipas</legend>
