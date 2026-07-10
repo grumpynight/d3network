@@ -329,6 +329,18 @@ function createVisualization() {
     fitViewToGraph();
 }
 
+// Re-bind the link lines and restart the layout after the links array is
+// mutated in place (used by edit.js when a link change applies instantly)
+function applyLinkChange() {
+    link = container.select('.links').selectAll('line')
+        .data(links)
+        .join('line')
+        .attr('class', d => `relationship-${d.type}`);
+    simulation.force('link').links(links);
+    graphComponents = null; // connectivity changed; recompute components
+    simulation.alpha(0.3).restart();
+}
+
 // Load and process data from GitHub
 Promise.all([
     d3.text('./Points.txt'),

@@ -339,6 +339,15 @@ async function handleSubmission(body, env) {
         change.slug = `${source}-${target}`;
     }
 
+    // Link changes apply immediately (still auditable as commits on
+    // gh-pages); new characters and image changes need owner approval.
+    if (action === 'add_link' || action === 'remove_link' || action === 'change_link_type') {
+        for (const file of change.files) {
+            await gh.putFile(file.path, file.text, file.base.sha, BASE_BRANCH, change.title);
+        }
+        return { ok: true, applied: true };
+    }
+
     const prUrl = await openPullRequest(gh, action, change);
     return { ok: true, pr: prUrl };
 }

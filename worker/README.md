@@ -1,10 +1,15 @@
 # d3network edit worker
 
 Cloudflare Worker that powers the "Siūlyti pokyčius" button on the site.
-It receives edit suggestions (new character, image change, link add/remove/retype),
-validates them, and opens a **pull request** against `gh-pages`. Merging the PR
-publishes the change; closing it rejects the suggestion. Site visitors do not
-need GitHub accounts.
+It receives edits, validates them, and handles them in one of two ways:
+
+- **New character / image change** → opens a **pull request** against
+  `gh-pages` for the owner to approve (merging publishes, closing rejects).
+- **Link add / retype / remove** → **commits directly** to `gh-pages`
+  (no approval needed; every change is still an auditable commit that can
+  be reverted from the git history).
+
+Site visitors do not need GitHub accounts.
 
 ## One-time setup
 

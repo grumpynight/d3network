@@ -27,10 +27,15 @@ const MAX_IMAGE_HEIGHT = 640;
         remove_link: ['source', 'target'],
     };
 
+    // Only these actions go through an approval PR; link edits apply instantly
+    const NEEDS_APPROVAL = new Set(['add_character', 'change_image']);
+
     function showFieldsFor(action) {
         form.querySelectorAll('[data-field]').forEach(row => {
             row.style.display = FIELDS[action].includes(row.dataset.field) ? '' : 'none';
         });
+        form.querySelector('.edit-note').style.display =
+            NEEDS_APPROVAL.has(action) ? '' : 'none';
         resetLinkRows();
         setStatus('', '');
     }
@@ -145,6 +150,25 @@ const MAX_IMAGE_HEIGHT = 640;
         return node;
     }
 
+    // Mirror an instantly-applied link change into the live graph so the
+    // submitter sees it without waiting for the Pages redeploy
+    function applyLinkLocally({ action, payload }) {
+        const a = knownName(payload.source);
+        const b = knownName(payload.target);
+        if (!a || !b) return;
+        const idx = links.findIndex(l =>
+            (l.source.id === a.id && l.target.id === b.id) ||
+            (l.source.id === b.id && l.target.id === a.id));
+        if (action === 'add_link' && idx === -1) {
+            links.push({ source: a, target: b, type: payload.type });
+        } else if (action === 'remove_link' && idx !== -1) {
+            links.splice(idx, 1);
+        } else if (action === 'change_link_type' && idx !== -1) {
+            links[idx].type = payload.type;
+        }
+        applyLinkChange();
+    }
+
     // The preview <img> must have loaded and be within the size limit
     function requireValidImage() {
         if (!/^https?:\/\//.test(value('image'))) {
@@ -239,10 +263,13 @@ const MAX_IMAGE_HEIGHT = 640;
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || `Klaida (${res.status})`);
+            if (data.applied) applyLinkLocally(submission);
             form.reset();
             imagePreview.style.display = 'none';
             showFieldsFor(actionSelect.value);
-            setStatus('success', 'Pasiūlymas pateiktas, pokyčiai bus matomi po admin patvirtinimo.');
+            setStatus('success', data.applied
+                ? 'Pokyčiai išsaugoti.'
+                : 'Pasiūlymas pateiktas, pokyčiai bus matomi po admin patvirtinimo.');
         } catch (err) {
             const offline = err instanceof TypeError;
             setStatus('error', offline ? 'Nepavyko pasiekti serverio — bandyk vėliau' : err.message);
