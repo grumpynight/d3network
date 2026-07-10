@@ -36,6 +36,65 @@
             <span>ROMANTINIAI SANTYKIAI</span>
         </div>
     </div>
+    <button class="edit-open-button" type="button">SIŪLYTI PAKEITIMĄ</button>
+
+    <div class="edit-overlay">
+        <form class="edit-form">
+            <button class="edit-close" type="button" aria-label="Uždaryti">&times;</button>
+            <h2>Siūlyti pakeitimą</h2>
+            <p class="edit-note">Pokyčiai bus matomi po admin patvirtinimo.</p>
+
+            <label>Veiksmas
+                <select name="action">
+                    <option value="add_character">Naujas veikėjas</option>
+                    <option value="change_image">Pakeisti nuotrauką</option>
+                    <option value="add_link">Pridėti / keisti ryšį</option>
+                    <option value="remove_link">Pašalinti ryšį</option>
+                </select>
+            </label>
+
+            <label data-field="name">Veikėjo vardas
+                <input type="text" name="name" maxlength="80" placeholder="VARDAS PAVARDĖ">
+            </label>
+
+            <label data-field="character">Veikėjas
+                <input type="text" name="character" list="character-names" placeholder="IEŠKOK...">
+            </label>
+
+            <label data-field="image">Nuotraukos nuoroda <span class="edit-optional">(iki 400×640)</span>
+                <input type="url" name="image" maxlength="500" placeholder="https://i.imgur.com/...">
+                <img class="edit-image-preview" alt="Nuotraukos peržiūra">
+            </label>
+
+            <label data-field="source">Pirmas veikėjas
+                <input type="text" name="source" list="character-names" placeholder="IEŠKOK...">
+            </label>
+
+            <label data-field="target">Antras veikėjas
+                <input type="text" name="target" list="character-names" placeholder="IEŠKOK...">
+            </label>
+
+            <label data-field="partner-optional">Ryšys su veikėju <span class="edit-optional">(nebūtina)</span>
+                <input type="text" name="partner" list="character-names" placeholder="IEŠKOK...">
+            </label>
+
+            <fieldset data-field="type" class="edit-types">
+                <legend>Ryšio tipas</legend>
+                <label><input type="radio" name="type" value="1" checked>
+                    <span class="edit-type-swatch" style="background:#4CAF50"></span>Draugai ir pažįstami</label>
+                <label><input type="radio" name="type" value="2">
+                    <span class="edit-type-swatch" style="background:#2196F3"></span>Šeima</label>
+                <label><input type="radio" name="type" value="3">
+                    <span class="edit-type-swatch" style="background:#E91E63"></span>Romantiniai santykiai</label>
+            </fieldset>
+
+            <div class="edit-status"></div>
+            <button class="edit-submit" type="submit">PATEIKTI</button>
+        </form>
+    </div>
+    <datalist id="character-names"></datalist>
+
     <script src="js/main.js"></script>
+    <script src="js/edit.js"></script>
 </body>
 </html> 

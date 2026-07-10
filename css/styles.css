@@ -214,3 +214,169 @@ svg {
 .search-result-item.selected {
     background-color: #f0f0f0;
 }
+
+/* --- Suggest-an-edit modal --- */
+
+.edit-open-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.edit-open-button:hover {
+    background: #fff;
+}
+
+.edit-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background: rgba(0, 0, 0, 0.4);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.edit-overlay.open {
+    display: flex;
+}
+
+.edit-form {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    padding: 24px;
+    font-family: 'Quicksand', sans-serif;
+    box-sizing: border-box;
+}
+
+.edit-form h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.edit-note {
+    margin: 0 0 16px;
+    font-size: 12px;
+    color: #777;
+}
+
+.edit-form label {
+    display: block;
+    margin: 12px 0;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+}
+
+.edit-optional {
+    color: #999;
+    text-transform: none;
+}
+
+.edit-form input[type="text"],
+.edit-form input[type="url"],
+.edit-form select {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.edit-types {
+    margin: 12px 0;
+    padding: 8px 12px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.edit-types legend {
+    padding: 0 4px;
+    font-size: 13px;
+}
+
+.edit-types label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    cursor: pointer;
+}
+
+.edit-type-swatch {
+    display: inline-block;
+    width: 24px;
+    height: 4px;
+    border-radius: 2px;
+}
+
+.edit-image-preview {
+    display: none;
+    margin-top: 8px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+.edit-status {
+    min-height: 18px;
+    margin: 12px 0 8px;
+    font-size: 13px;
+}
+
+.edit-status.error { color: #c62828; }
+.edit-status.success { color: #2e7d32; }
+
+.edit-submit {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: #fff;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.edit-submit:hover { background: #000; }
+.edit-submit:disabled { background: #999; cursor: wait; }
+
+.edit-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+}
+
+.edit-close:hover { color: #333; }

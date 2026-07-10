@@ -1,0 +1,4 @@
+# Local secrets for the Cloudflare worker — never commit tokens
+worker/.dev.vars
+worker/node_modules/
+worker/.wrangler/
