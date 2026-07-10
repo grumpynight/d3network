@@ -1,4 +1,4 @@
-// "Siūlyti pakeitimą" modal: lets visitors suggest edits, which the worker
+// "Siūlyti pokyčius" modal: lets visitors suggest edits, which the worker
 // turns into pull requests for the owner to approve.
 //
 // After deploying the worker (see worker/README.md), put its URL here.

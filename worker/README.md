@@ -1,6 +1,6 @@
 # d3network edit worker
 
-Cloudflare Worker that powers the "Siūlyti pakeitimą" button on the site.
+Cloudflare Worker that powers the "Siūlyti pokyčius" button on the site.
 It receives edit suggestions (new character, image change, link add/remove/retype),
 validates them, and opens a **pull request** against `gh-pages`. Merging the PR
 publishes the change; closing it rejects the suggestion. Site visitors do not
