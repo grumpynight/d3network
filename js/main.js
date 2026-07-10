@@ -108,7 +108,7 @@ const svg = d3.select("svg")
 
 // Initialize zoom behavior
 const zoom = d3.zoom()
-    .scaleExtent([0.1, 4])
+    .scaleExtent([0.05, 4])
     .on("zoom", zoomed);
 
 // Create container for zoom
@@ -120,6 +120,33 @@ svg.call(zoom);
 
 function zoomed(event) {
     container.attr("transform", event.transform);
+}
+
+function fitViewToGraph() {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    nodes.forEach(n => {
+        minX = Math.min(minX, n.x);
+        maxX = Math.max(maxX, n.x);
+        minY = Math.min(minY, n.y);
+        maxY = Math.max(maxY, n.y);
+    });
+
+    const padding = 300;
+    minX -= padding;
+    maxX += padding;
+    minY -= padding;
+    maxY += padding;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const [minScale, maxScale] = zoom.scaleExtent();
+    const k = Math.max(minScale, Math.min(vw / (maxX - minX), vh / (maxY - minY), maxScale));
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+
+    svg.call(zoom.transform, d3.zoomIdentity
+        .translate(vw / 2 - cx * k, vh / 2 - cy * k)
+        .scale(k));
 }
 
 // Separate function for data processing
@@ -294,6 +321,12 @@ function createVisualization() {
             return `translate(${d.x + pos.x},${d.y + pos.y})`;
         });
     });
+
+    // Pre-warm the layout off-screen so the page opens on an already
+    // spread-out graph instead of the initial "explosion" from the origin,
+    // then zoom out to fit the whole graph in the viewport.
+    simulation.tick(300);
+    fitViewToGraph();
 }
 
 // Load and process data from GitHub
@@ -524,60 +557,46 @@ function centerOnNode(selectedNode) {
         }
     });
 
-    if (isMobile) {
-        // Calculate the bounding box for mobile view
-        let minX = Infinity, maxX = -Infinity;
-        let minY = Infinity, maxY = -Infinity;
+    // Fit the view to the selected node and its direct connections
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
 
-        connectedNodes.forEach(node => {
-            minX = Math.min(minX, node.x);
-            maxX = Math.max(maxX, node.x);
-            minY = Math.min(minY, node.y);
-            maxY = Math.max(maxY, node.y);
-        });
+    connectedNodes.forEach(node => {
+        minX = Math.min(minX, node.x);
+        maxX = Math.max(maxX, node.x);
+        minY = Math.min(minY, node.y);
+        maxY = Math.max(maxY, node.y);
+    });
 
-        // Add more padding for mobile
-        const padding = Math.min(vw, vh) * 0.15; // 15% of viewport
-        minX -= padding;
-        maxX += padding;
-        minY -= padding;
-        maxY += padding;
+    const padding = Math.min(vw, vh) * 0.15; // 15% of viewport
+    minX -= padding;
+    maxX += padding;
+    minY -= padding;
+    maxY += padding;
 
-        // Calculate required scale for mobile
-        const boxWidth = maxX - minX;
-        const boxHeight = maxY - minY;
-        const scale = Math.min(
-            vw / boxWidth,
-            vh / boxHeight,
-            1.5  // Lower maximum zoom level for mobile
-        ) * 0.9; // Slightly reduce scale
+    const boxWidth = maxX - minX;
+    const boxHeight = maxY - minY;
+    const maxZoom = isMobile ? 1.5 : 1.0; // moderate zoom-in cap
+    const scale = Math.min(
+        vw / boxWidth,
+        vh / boxHeight,
+        maxZoom
+    ) * 0.9; // Slightly reduce scale
 
-        // Calculate center
-        const centerX = (minX + maxX) / 2;
-        const centerY = (minY + maxY) / 2;
+    // Calculate center
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
 
-        // Calculate translation
-        const x = vw/2 - centerX * scale;
-        const y = vh/2 - centerY * scale;
+    // Calculate translation
+    const x = vw/2 - centerX * scale;
+    const y = vh/2 - centerY * scale;
 
-        // Animate to the new view
-        svg.transition()
-            .duration(750)
-            .call(zoom.transform, d3.zoomIdentity
-                .translate(x, y)
-                .scale(scale));
-    } else {
-        // Desktop behavior - center on node without extreme zoom
-        const scale = d3.zoomTransform(svg.node()).k; // maintain current scale
-        const x = vw/2 - selectedNode.x * scale;
-        const y = vh/2 - selectedNode.y * scale;
-
-        svg.transition()
-            .duration(750)
-            .call(zoom.transform, d3.zoomIdentity
-                .translate(x, y)
-                .scale(scale));
-    }
+    // Animate to the new view
+    svg.transition()
+        .duration(750)
+        .call(zoom.transform, d3.zoomIdentity
+            .translate(x, y)
+            .scale(scale));
 }
 
 function highlightNodeAndConnections(d) {
@@ -587,13 +606,9 @@ function highlightNodeAndConnections(d) {
         if (link.target.id === d.id) connectedNodes.add(link.source.id);
     });
 
-    // Force label visibility
-    labelGroups.each(function(n) {
-        d3.select(this)
-            .classed("visible", connectedNodes.has(n.id))
-            .select(".node-label")
-            .style("opacity", connectedNodes.has(n.id) ? 1 : 0);
-    });
+    // Label visibility is class-driven (.label-group.visible); avoid inline
+    // opacity here — it would override the class and break hover afterwards.
+    labelGroups.classed("visible", n => connectedNodes.has(n.id));
 
     node.classed("highlighted", n => connectedNodes.has(n.id))
         .classed("faded", n => !connectedNodes.has(n.id));
