@@ -7,6 +7,8 @@ let node, link, labelGroups;
 let simulation;
 let validNodeNames = new Set();
 let drag; // Declare drag variable
+let graphComponents = null; // Cached connected components (graph is static after load)
+let nodeById = new Map();
 
 function findConnectedComponents() {
     const visited = new Set();
@@ -37,42 +39,64 @@ function findConnectedComponents() {
 }
 
 function disconnectedNodesForce(alpha) {
-    const components = findConnectedComponents();
-    const mainComponent = components.reduce((max, curr) => 
-        curr.size > max.size ? curr : max, components[0]);
-    
-    let centerX = 0, centerY = 0, count = 0;
+    // Components and node lookup are computed once: the graph never changes after load.
+    // Lazy init so link.source/target are already resolved to node objects by forceLink.
+    if (!graphComponents) {
+        graphComponents = findConnectedComponents();
+        nodeById = new Map(nodes.map(n => [n.id, n]));
+    }
+    if (graphComponents.length < 2) return;
+
+    const mainComponent = graphComponents.reduce((max, curr) =>
+        curr.size > max.size ? curr : max, graphComponents[0]);
+
+    let centerX = 0, centerY = 0;
     mainComponent.forEach(nodeId => {
-        const node = nodes.find(n => n.id === nodeId);
+        const node = nodeById.get(nodeId);
         centerX += node.x;
         centerY += node.y;
-        count++;
     });
-    centerX /= count;
-    centerY /= count;
-    
+    centerX /= mainComponent.size;
+    centerY /= mainComponent.size;
+
     let maxRadius = 0;
     mainComponent.forEach(nodeId => {
-        const node = nodes.find(n => n.id === nodeId);
+        const node = nodeById.get(nodeId);
         const dx = node.x - centerX;
         const dy = node.y - centerY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        maxRadius = Math.max(maxRadius, distance);
+        maxRadius = Math.max(maxRadius, Math.sqrt(dx * dx + dy * dy));
     });
-    
+
     const boundaryRadius = maxRadius + 300;
-    
-    nodes.forEach(node => {
-        if (!mainComponent.has(node.id)) {
-            const dx = node.x - centerX;
-            const dy = node.y - centerY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance > boundaryRadius) {
-                const scale = (boundaryRadius / distance);
-                node.x = centerX + dx * scale;
-                node.y = centerY + dy * scale;
-            }
+
+    // Keep each satellite component near the main cluster by translating it as a
+    // rigid body: clamping nodes individually onto the boundary circle would
+    // flatten the component's internal shape (triangles collapse into a line).
+    graphComponents.forEach(component => {
+        if (component === mainComponent) return;
+
+        let cx = 0, cy = 0;
+        component.forEach(nodeId => {
+            const node = nodeById.get(nodeId);
+            cx += node.x;
+            cy += node.y;
+        });
+        cx /= component.size;
+        cy /= component.size;
+
+        const dx = cx - centerX;
+        const dy = cy - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance > boundaryRadius) {
+            const scale = boundaryRadius / distance;
+            const shiftX = (centerX + dx * scale) - cx;
+            const shiftY = (centerY + dy * scale) - cy;
+            component.forEach(nodeId => {
+                const node = nodeById.get(nodeId);
+                node.x += shiftX;
+                node.y += shiftY;
+            });
         }
     });
 }
