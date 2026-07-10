@@ -113,8 +113,8 @@ function processData(pointsText, linksText) {
     // Process links
     const linksLines = linksText.split('\n').filter(line => line.trim());
     links = linksLines.map(line => {
-        const [source, target, relationship, type] = line.split('\t');
-        return { source, target, relationship, type };
+        const [source, target, type] = line.split('\t');
+        return { source, target, type };
     }).filter(link => {
         const isValid = validNodeNames.has(link.source) && validNodeNames.has(link.target);
         if (!isValid) {
