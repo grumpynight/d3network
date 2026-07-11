@@ -22,4 +22,4 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh api "repos/$REPO/issues/$PR/assignees" -f 'assignees[]=grumpynight'
-          gh pr comment "$PR" --repo "$REPO" --body '@grumpynight naujas pasiūlymas laukia patvirtinimo.'
+          gh pr comment "$PR" --repo "$REPO" --body 'pending approval by @grumpynight'
