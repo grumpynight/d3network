@@ -270,6 +270,16 @@ const MAX_IMAGE_HEIGHT = 640;
             setStatus('success', data.applied
                 ? 'Pokyčiai išsaugoti.'
                 : 'Pasiūlymas pateiktas, pokyčiai bus matomi po admin patvirtinimo.');
+            if (!data.applied && data.pr) {
+                // same sentence, with "patvirtinimo" linking to the PR
+                const a = document.createElement('a');
+                a.href = data.pr;
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.textContent = 'patvirtinimo';
+                statusBox.textContent = '';
+                statusBox.append('Pasiūlymas pateiktas, pokyčiai bus matomi po admin ', a, '.');
+            }
         } catch (err) {
             const offline = err instanceof TypeError;
             setStatus('error', offline ? 'Nepavyko pasiekti serverio — bandyk vėliau' : err.message);

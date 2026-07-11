@@ -412,6 +412,12 @@ svg {
 .edit-status.error { color: #c62828; }
 .edit-status.success { color: #2e7d32; }
 
+.edit-status a {
+    color: #2e7d32;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
 .edit-submit {
     width: 100%;
     padding: 10px;
