@@ -103,7 +103,7 @@ KAISA RÄIKKÖNEN	https://i.ibb.co/hx3bxG8F/f714019728b8bd69b56a663df0e1805b.png
 ZARA TOUSSAINT	https://i.ibb.co/wFBTkYXQ/zaraite.png
 EVA UCHINAGA	https://i.ibb.co/Hfp202Pz/aeriii3.png
 LUCAS HAYES	https://i.ibb.co/yjJC3Cj/G-4-Fx5-Nb-UAEWBkz.png
-TAEYANG PARK	https://i.ibb.co/6Vmfprb/kai2.png
+TAEYANG PARK	https://i.ibb.co/6Vmfprb/kai2.png	0,-1
 HYUNSU KWON	https://i.ibb.co/0y85hVg2/iann.png
 LORENZO "ENZO" MARCHETTI	https://2img.net/i.imgur.com/QSscAJ2.png
 CELESTE IVY KITSENKOVA	https://2img.net/i.imgur.com/n2ffGmr.png
