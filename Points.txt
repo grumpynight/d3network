@@ -145,5 +145,5 @@ ADORA KWON	https://i.ibb.co/Lh6F0sG/GRElp-Ga-Ws-AEv2q-D.png
 KARMEN RICCI	https://i.ibb.co/pv9G43QF/HEMmpq-Fbo-AAf4yz.png
 GABRIEL AMMANN	https://i.ibb.co/hFWCF8Nf/v1.png
 JAEWON BAE	https://i.ibb.co/mVKHNB1m/hyunjin2.png
-MILANA MADDOX	https://i.ibb.co/QjJCN5jp/mi2.png
+MILANA MADDOX	https://i.ibb.co/QjJCN5jp/mi2.png	0,-1
 NOVA DELANOE	https://i.ibb.co/r27VKnL9/72b8c1323e83157f693dd6b2b343e00b.png
