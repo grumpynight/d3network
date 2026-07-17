@@ -104,7 +104,7 @@ ZARA TOUSSAINT	https://i.ibb.co/wFBTkYXQ/zaraite.png
 EVA UCHINAGA	https://i.ibb.co/Hfp202Pz/aeriii3.png
 LUCAS HAYES	https://i.ibb.co/yjJC3Cj/G-4-Fx5-Nb-UAEWBkz.png
 TAEYANG PARK	https://i.ibb.co/6Vmfprb/kai2.png	0,-1
-HYUNSU KWON	https://i.ibb.co/0y85hVg2/iann.png
+HYUNSU KWON	https://i.ibb.co/0y85hVg2/iann.png	0,-1
 LORENZO "ENZO" MARCHETTI	https://2img.net/i.imgur.com/QSscAJ2.png	0,-1
 CELESTE IVY KITSENKOVA	https://2img.net/i.imgur.com/n2ffGmr.png	0,-0.82
 DOMINIK GALE ELDRITCH	https://2img.net/i.imgur.com/NBK2LqS.png
