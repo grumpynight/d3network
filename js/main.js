@@ -356,6 +356,17 @@ function createVisualization() {
     fitViewToGraph();
 }
 
+// Reposition one node's image after its crop offset changed
+// (used by edit.js when a position-only image edit applies instantly)
+function applyOffsetChange(nodeId) {
+    node.filter(d => d.id === nodeId).each(function(d) {
+        const img = d3.select(this).select('image');
+        const w = +img.attr('width'), h = +img.attr('height');
+        img.attr('x', -80 - (w - 160) * (d.offset.dx + 1) / 2)
+           .attr('y', -80 - (h - 160) * (d.offset.dy + 1) / 2);
+    });
+}
+
 // Re-bind the link lines and restart the layout after the links array is
 // mutated in place (used by edit.js when a link change applies instantly)
 function applyLinkChange() {

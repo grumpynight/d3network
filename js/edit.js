@@ -215,9 +215,18 @@ const MAX_IMAGE_HEIGHT = 640;
         return node;
     }
 
-    // Mirror an instantly-applied link change into the live graph so the
+    // Mirror an instantly-applied change into the live graph so the
     // submitter sees it without waiting for the Pages redeploy
-    function applyLinkLocally({ action, payload }) {
+    function applyChangeLocally({ action, payload }) {
+        if (action === 'change_image') {
+            // position-only image edit: update the stored offset and re-crop
+            const n = knownName(payload.name);
+            if (!n) return;
+            const [dx, dy] = payload.offset.split(',').map(Number);
+            n.offset = { dx, dy };
+            applyOffsetChange(n.id);
+            return;
+        }
         const a = knownName(payload.source);
         const b = knownName(payload.target);
         if (!a || !b) return;
@@ -335,7 +344,7 @@ const MAX_IMAGE_HEIGHT = 640;
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.error || `Klaida (${res.status})`);
-            if (data.applied) applyLinkLocally(submission);
+            if (data.applied) applyChangeLocally(submission);
             form.reset();
             resetCrop();
             showFieldsFor(actionSelect.value);

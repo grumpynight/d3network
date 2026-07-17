@@ -308,6 +308,8 @@ async function handleSubmission(body, env) {
         if (row[1] === image && (row[2] || '') === offset) {
             throw new ValidationError('This is already the current image');
         }
+        // Same image, new crop position: harmless, applies without approval
+        const positionOnly = row[1] === image;
         const oldImage = row[1];
         row[1] = image;
         row.length = 2;
@@ -315,7 +317,10 @@ async function handleSubmission(body, env) {
         change = {
             files: [{ path: POINTS_PATH, text: serializeRows(pointRows), base: points }],
             slug: name,
-            title: `Nauja nuotrauka: ${name}${suffix}`,
+            direct: positionOnly,
+            title: positionOnly
+                ? `Nuotraukos pozicija: ${name}${suffix}`
+                : `Nauja nuotrauka: ${name}${suffix}`,
             body: `Siūloma nauja **${name}** nuotrauka.\n\nSena: ${oldImage}\nNauja: ${image}`,
         };
     } else {
@@ -357,9 +362,10 @@ async function handleSubmission(body, env) {
         change.slug = `${source}-${target}`;
     }
 
-    // Link changes apply immediately (still auditable as commits on
-    // gh-pages); new characters and image changes need owner approval.
-    if (action === 'add_link' || action === 'remove_link' || action === 'change_link_type') {
+    // Link changes and crop-position tweaks apply immediately (still
+    // auditable as commits on gh-pages); new characters and actual image
+    // changes need owner approval.
+    if (action === 'add_link' || action === 'remove_link' || action === 'change_link_type' || change.direct) {
         for (const file of change.files) {
             await gh.putFile(file.path, file.text, file.base.sha, BASE_BRANCH, change.title);
         }
