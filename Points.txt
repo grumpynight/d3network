@@ -83,7 +83,7 @@ ENIAN AKHUN	https://i.ibb.co/rGvQBgLH/5.png
 CHRISTOPHER JACE PARK	https://2img.net/i.imgur.com/1NKFbx2.png
 JINNY BLACKBURN	https://2img.net/i.imgur.com/FzTtenQ.png
 SAGE MORGAN RAVENSHIRE	https://2img.net/i.imgur.com/FEnI7o9.png
-EDWARD MERRITT-TATE	https://2img.net/i.imgur.com/upxlX3G.png
+EDWARD MERRITT-TATE	https://2img.net/i.imgur.com/upxlX3G.png	0,-1
 AUGUST MERRITT-TATE	https://2img.net/i.imgur.com/2SRhpi7.jpeg
 GEORGE WOLF	https://2img.net/i.imgur.com/x0XL45F.png
 NIKANDROS VEYRA	https://2img.net/i.imgur.com/DXwH2jF.png
