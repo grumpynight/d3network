@@ -195,6 +195,24 @@ const MAX_IMAGE_HEIGHT = 640;
         return `${+crop.dx.toFixed(2)},${+crop.dy.toFixed(2)}`;
     }
 
+    // When a character is picked for a photo change, prefill their current
+    // image and position so repositioning alone is effortless. A URL the
+    // user typed themselves is never overwritten.
+    let autofilledImage = '';
+    form.querySelector('[name="character"]').addEventListener('input', () => {
+        if (actionSelect.value !== 'change_image') return;
+        const n = knownName(value('character'));
+        if (!n) return;
+        const current = imageInput.value.trim();
+        if (current && current !== autofilledImage) return;
+        autofilledImage = n.image;
+        imageInput.value = n.image;
+        imageInput.dispatchEvent(new Event('input'));
+        crop.dx = n.offset ? n.offset.dx : 0;
+        crop.dy = n.offset ? n.offset.dy : 0;
+        layoutCrop();
+    });
+
     function value(name) {
         const el = form.querySelector(`[name="${name}"]`);
         return el ? el.value.trim() : '';
