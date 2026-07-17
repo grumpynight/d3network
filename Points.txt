@@ -78,7 +78,7 @@ EMILIA TOSCANI	https://i.ibb.co/VYp24Jb/meile2.png
 HEEJUN KANG	https://i.imgur.com/AIsKtn0.png
 YEJUN MIN	https://i.imgur.com/iT1Ejg1.png
 ELIZA NIAMH CHAMBERLAIN	https://2img.net/i.imgur.com/NF6xqgD.png
-PERCIVAL LUCIEN REED	https://2img.net/i.imgur.com/cLr11Pi.png
+PERCIVAL LUCIEN REED	https://2img.net/i.imgur.com/cLr11Pi.png	0,-0.34
 ENIAN AKHUN	https://i.ibb.co/rGvQBgLH/5.png
 CHRISTOPHER JACE PARK	https://2img.net/i.imgur.com/1NKFbx2.png
 JINNY BLACKBURN	https://2img.net/i.imgur.com/FzTtenQ.png
