@@ -35,7 +35,7 @@ AYLA KIRAZ ATILGAN	https://i.imgur.com/ZasBQtX.png
 DMITRIY OLEG KITSENKOV	https://i.imgur.com/M1vbmPw.png
 KATERINA KALASHNIKOVA	https://i.imgur.com/OvnNn6b.png
 ALEKSANDER M. KALASHNIKOV	https://i.imgur.com/ey5B2Rr.png
-GRISHA LEBEDEVA	https://2img.net/i.imgur.com/QA5LNjd.jpeg
+GRISHA LEBEDEVA	https://2img.net/i.imgur.com/QA5LNjd.jpeg	0,-0.95
 KIR VASILIEV	https://i.imgur.com/C7LcDxh.png
 MINJAE PARK	https://imgur.com/toKy21T.png
 CALLISTA FAYE KÄHKÖNEN	https://i.imgur.com/4hONo4r.png
