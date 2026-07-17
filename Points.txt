@@ -119,7 +119,7 @@ NICK JOON MOON	https://2img.net/i.imgur.com/56YGiLa.png
 JIHOON BAEK	https://i.ibb.co/qFFCX6tV/jihoon.png	0,-1
 DANIEL FALCO	https://2img.net/i.imgur.com/lehg2Fb.png
 ELINA FALCO	https://i.postimg.cc/5972JG58/rose200.png	0,-1
-MINHO KIM	https://2img.net/i.imgur.com/OX8ixrF.png
+MINHO KIM	https://2img.net/i.imgur.com/OX8ixrF.png	0,-1
 HELAENA NORA DARKE	https://2img.net/i.imgur.com/fXfG0a0.png
 ELECTRA NORA SERRANO	https://i.postimg.cc/Dy3RXYZf/006.png
 HAEUN SHIN	https://i.imgur.com/k6skivA.png
