@@ -40,7 +40,7 @@ KIR VASILIEV	https://i.imgur.com/C7LcDxh.png
 MINJAE PARK	https://imgur.com/toKy21T.png
 CALLISTA FAYE KÄHKÖNEN	https://i.imgur.com/4hONo4r.png
 ŠARLOTĖ ALEKNAVIČIŪTĖ	https://i.imgur.com/rMnin1z.png
-KAROLIS MIKALAUSKAS	https://64.media.tumblr.com/bfa20345527ae85113842e2342449868/d8919fed31938fbd-24/s500x750/747a4a45ec409afed454a5c5b0104d6090410c60.png
+KAROLIS MIKALAUSKAS	https://64.media.tumblr.com/bfa20345527ae85113842e2342449868/d8919fed31938fbd-24/s500x750/747a4a45ec409afed454a5c5b0104d6090410c60.png	0,-0.67
 NOAH BAUER	https://i.ibb.co/X5n2532/j2.png
 ALEXANDER JEON	https://i.ibb.co/t3PFj1v/GLv-N0v-PWQAAIOWm.png
 MIA CHRISTENSEN	https://i.ibb.co/zWQS0PDD/ninge1.png
