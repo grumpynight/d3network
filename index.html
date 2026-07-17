@@ -63,8 +63,13 @@
 
             <label data-field="image">Nuotraukos nuoroda <span class="edit-optional">(iki 400×640)</span>
                 <input type="url" name="image" maxlength="500" placeholder="https://i.imgur.com/...">
-                <img class="edit-image-preview" alt="Nuotraukos peržiūra">
             </label>
+            <div data-field="image" class="edit-crop">
+                <div class="edit-crop-circle">
+                    <img class="edit-image-preview" alt="Nuotraukos peržiūra" draggable="false">
+                </div>
+                <div class="edit-crop-hint">Koreguok nuotraukos poziciją</div>
+            </div>
 
             <label data-field="source">Pirmas veikėjas
                 <input type="text" name="source" list="character-names" placeholder="IEŠKOK...">

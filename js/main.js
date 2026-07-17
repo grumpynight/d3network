@@ -154,11 +154,19 @@ function processData(pointsText, linksText) {
     const pointsLines = pointsText.split('\n').filter(line => line.trim());
     console.log("Number of points:", pointsLines.length);
 
-    // Process nodes
+    // Process nodes (optional 3rd column: "dx,dy" crop offset in [-1,1])
     nodes = pointsLines.map(line => {
-        const [name, image] = line.split('\t');
+        const [name, image, offset] = line.split('\t');
         validNodeNames.add(name);
-        return { id: name, name: name, image: image };
+        let dx = 0, dy = 0;
+        if (offset) {
+            const parts = offset.split(',').map(Number);
+            if (parts.length === 2 && parts.every(isFinite)) {
+                dx = Math.max(-1, Math.min(1, parts[0]));
+                dy = Math.max(-1, Math.min(1, parts[1]));
+            }
+        }
+        return { id: name, name: name, image: image, offset: { dx, dy } };
     });
 
     // Process links
@@ -279,7 +287,8 @@ function createVisualization() {
                 .classed("faded", false);
         });
 
-    // Add images to nodes
+    // Add images to nodes (centered slice until natural size is known,
+    // then repositioned by the character's stored crop offset)
     node.append("image")
         .attr("xlink:href", d => d.image)
         .attr("width", 160)
@@ -289,6 +298,24 @@ function createVisualization() {
         .attr("class", "node-image")
         .attr("preserveAspectRatio", "xMidYMid slice")
         .attr("clip-path", (d, i) => `url(#circle-clip-${i})`);
+
+    node.each(function(d) {
+        const imgEl = d3.select(this).select("image");
+        const probe = new Image();
+        probe.onload = () => {
+            const iw = probe.naturalWidth, ih = probe.naturalHeight;
+            if (!iw || !ih) return;
+            const scale = Math.max(160 / iw, 160 / ih);
+            const w = iw * scale, h = ih * scale;
+            imgEl
+                .attr("preserveAspectRatio", "none")
+                .attr("width", w)
+                .attr("height", h)
+                .attr("x", -80 - (w - 160) * (d.offset.dx + 1) / 2)
+                .attr("y", -80 - (h - 160) * (d.offset.dy + 1) / 2);
+        };
+        probe.src = d.image;
+    });
 
     // Add clip paths
     node.append("clipPath")

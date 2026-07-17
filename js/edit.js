@@ -117,18 +117,83 @@ const MAX_IMAGE_HEIGHT = 640;
 
     actionSelect.addEventListener('change', () => showFieldsFor(actionSelect.value));
 
+    // --- circular drag-to-position crop preview ---
+    const cropBox = form.querySelector('.edit-crop');
+    const cropCircle = form.querySelector('.edit-crop-circle');
+    const CROP_SIZE = 160;
+    const crop = { dx: 0, dy: 0, w: 0, h: 0 };
+
+    // Cover-fit the image in the circle and place it by the current offset
+    // (same math as the node renderer in main.js)
+    function layoutCrop() {
+        const iw = imagePreview.naturalWidth, ih = imagePreview.naturalHeight;
+        if (!iw || !ih) return;
+        const scale = Math.max(CROP_SIZE / iw, CROP_SIZE / ih);
+        crop.w = iw * scale;
+        crop.h = ih * scale;
+        imagePreview.style.width = crop.w + 'px';
+        imagePreview.style.height = crop.h + 'px';
+        imagePreview.style.left = (-(crop.w - CROP_SIZE) * (crop.dx + 1) / 2) + 'px';
+        imagePreview.style.top = (-(crop.h - CROP_SIZE) * (crop.dy + 1) / 2) + 'px';
+        cropBox.classList.toggle('draggable', crop.w > CROP_SIZE + 0.5 || crop.h > CROP_SIZE + 0.5);
+    }
+
+    function resetCrop() {
+        crop.dx = 0;
+        crop.dy = 0;
+        cropBox.classList.remove('active');
+    }
+
     imageInput.addEventListener('input', () => {
         const url = imageInput.value.trim();
+        crop.dx = 0;
+        crop.dy = 0;
         if (/^https?:\/\/\S+$/.test(url)) {
             imagePreview.src = url;
-            imagePreview.style.display = 'block';
+            if (imagePreview.complete && imagePreview.naturalWidth) {
+                cropBox.classList.add('active');
+                layoutCrop();
+            }
         } else {
-            imagePreview.style.display = 'none';
+            cropBox.classList.remove('active');
         }
     });
-    imagePreview.addEventListener('error', () => {
-        imagePreview.style.display = 'none';
+    imagePreview.addEventListener('load', () => {
+        cropBox.classList.add('active');
+        layoutCrop();
     });
+    imagePreview.addEventListener('error', () => {
+        cropBox.classList.remove('active');
+    });
+
+    let dragStart = null;
+    cropCircle.addEventListener('pointerdown', e => {
+        if (!crop.w) return;
+        e.preventDefault();
+        cropCircle.setPointerCapture(e.pointerId);
+        dragStart = { x: e.clientX, y: e.clientY, dx: crop.dx, dy: crop.dy };
+    });
+    cropCircle.addEventListener('pointermove', e => {
+        if (!dragStart) return;
+        const overX = crop.w - CROP_SIZE, overY = crop.h - CROP_SIZE;
+        if (overX > 0.5) {
+            const startLeft = -overX * (dragStart.dx + 1) / 2;
+            const left = Math.max(-overX, Math.min(0, startLeft + e.clientX - dragStart.x));
+            crop.dx = -2 * left / overX - 1;
+        }
+        if (overY > 0.5) {
+            const startTop = -overY * (dragStart.dy + 1) / 2;
+            const top = Math.max(-overY, Math.min(0, startTop + e.clientY - dragStart.y));
+            crop.dy = -2 * top / overY - 1;
+        }
+        layoutCrop();
+    });
+    ['pointerup', 'pointercancel'].forEach(ev =>
+        cropCircle.addEventListener(ev, () => { dragStart = null; }));
+
+    function cropOffsetString() {
+        return `${+crop.dx.toFixed(2)},${+crop.dy.toFixed(2)}`;
+    }
 
     function value(name) {
         const el = form.querySelector(`[name="${name}"]`);
@@ -174,7 +239,7 @@ const MAX_IMAGE_HEIGHT = 640;
         if (!/^https?:\/\//.test(value('image'))) {
             throw new Error('Įvesk nuotraukos nuorodą (http…)');
         }
-        if (imagePreview.style.display === 'none' || !imagePreview.complete || !imagePreview.naturalWidth) {
+        if (!cropBox.classList.contains('active') || !imagePreview.complete || !imagePreview.naturalWidth) {
             throw new Error('Nepavyko įkelti nuotraukos — patikrink nuorodą');
         }
         const w = imagePreview.naturalWidth, h = imagePreview.naturalHeight;
@@ -203,6 +268,7 @@ const MAX_IMAGE_HEIGHT = 640;
             if (knownName(name)) throw new Error(`Veikėjas „${name}“ jau egzistuoja`);
             payload.name = name;
             payload.image = requireValidImage();
+            payload.offset = cropOffsetString();
             // Links are optional (new characters may form their own group
             // that connects to nobody yet); empty rows are ignored
             const seen = new Set();
@@ -224,6 +290,12 @@ const MAX_IMAGE_HEIGHT = 640;
             const node = requireCharacter(value('character'), 'veikėjas');
             payload.name = node.name;
             payload.image = requireValidImage();
+            payload.offset = cropOffsetString();
+            const nodeOffset = node.offset
+                ? `${+node.offset.dx.toFixed(2)},${+node.offset.dy.toFixed(2)}` : '0,0';
+            if (node.image === payload.image && nodeOffset === payload.offset) {
+                throw new Error('Tai jau dabartinė nuotrauka');
+            }
         } else {
             const source = requireCharacter(value('source'), 'pirmas veikėjas');
             const target = requireCharacter(value('target'), 'antras veikėjas');
@@ -265,7 +337,7 @@ const MAX_IMAGE_HEIGHT = 640;
             if (!res.ok) throw new Error(data.error || `Klaida (${res.status})`);
             if (data.applied) applyLinkLocally(submission);
             form.reset();
-            imagePreview.style.display = 'none';
+            resetCrop();
             showFieldsFor(actionSelect.value);
             setStatus('success', data.applied
                 ? 'Pokyčiai išsaugoti.'

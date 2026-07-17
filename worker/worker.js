@@ -112,6 +112,18 @@ function cleanLinkType(value) {
     return type;
 }
 
+// Optional "dx,dy" crop offset, each in [-1,1]; '' means centered (no column)
+function cleanOffset(value) {
+    if (value == null || value === '') return '';
+    if (typeof value !== 'string' || value.length > 20) throw new ValidationError('Invalid image offset');
+    const parts = value.split(',').map(Number);
+    if (parts.length !== 2 || !parts.every(n => isFinite(n) && n >= -1 && n <= 1)) {
+        throw new ValidationError('Invalid image offset');
+    }
+    const [dx, dy] = parts.map(n => +n.toFixed(2));
+    return (dx === 0 && dy === 0) ? '' : `${dx},${dy}`;
+}
+
 function cleanSubmitter(value) {
     if (value == null) return '';
     return String(value).replace(/[\t\r\n]/g, ' ').trim().slice(0, 60);
@@ -221,6 +233,7 @@ function cleanFields(action, payload) {
         return {
             name: cleanName(payload.name, 'name'),
             image: cleanImageUrl(payload.image),
+            offset: cleanOffset(payload.offset),
             links,
         };
     }
@@ -228,6 +241,7 @@ function cleanFields(action, payload) {
         return {
             name: cleanName(payload.name, 'name'),
             image: cleanImageUrl(payload.image),
+            offset: cleanOffset(payload.offset),
         };
     }
     if (action === 'add_link' || action === 'remove_link' || action === 'change_link_type') {
@@ -264,9 +278,9 @@ async function handleSubmission(body, env) {
     let change; // { files: [{path, text, base}], title, body, slug }
 
     if (action === 'add_character') {
-        const { name, image } = fields;
+        const { name, image, offset } = fields;
         if (names.has(name)) throw new ValidationError(`Character "${name}" already exists`);
-        pointRows.push([name, image]);
+        pointRows.push(offset ? [name, image, offset] : [name, image]);
 
         const files = [{ path: POINTS_PATH, text: serializeRows(pointRows), base: points }];
         let linkNote = 'Be ryšių.';
@@ -288,12 +302,16 @@ async function handleSubmission(body, env) {
             body: `Siūlomas naujas veikėjas **${name}**.\n\nNuotrauka: ${image}\n\n${linkNote}`,
         };
     } else if (action === 'change_image') {
-        const { name, image } = fields;
+        const { name, image, offset } = fields;
         requireExisting(name, 'name');
         const row = pointRows.find(([n]) => n === name);
-        if (row[1] === image) throw new ValidationError('This is already the current image');
+        if (row[1] === image && (row[2] || '') === offset) {
+            throw new ValidationError('This is already the current image');
+        }
         const oldImage = row[1];
         row[1] = image;
+        row.length = 2;
+        if (offset) row.push(offset);
         change = {
             files: [{ path: POINTS_PATH, text: serializeRows(pointRows), base: points }],
             slug: name,
