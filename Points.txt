@@ -58,7 +58,7 @@ MALIA MYLLÄRI	https://i.imgur.com/VAWfBA2.png
 DIANA KITSENKOVA	https://i.postimg.cc/50z48P8N/diana.png
 KANGDAE KWON	https://i.imgur.com/XMuxidS.png
 BRIGITA ALEKNAVIČIŪTĖ	https://2img.net/i.imgur.com/7XkwsK5.png
-DENIZ CEMAL ATILGAN	https://i.ibb.co/gbPj2C8q/5555.png
+DENIZ CEMAL ATILGAN	https://i.ibb.co/gbPj2C8q/5555.png	0,-1
 TAISIA AUGUSTIN	https://i.postimg.cc/vT4Pbvbj/6a1305260825fc89e9620a94d87f5e13392f68f5.jpg
 WOOBIN CHUN	https://i.imgur.com/xHTrliX.png
 CHRISTIAN WANG	https://i.ibb.co/bMsZpDFb/Gh-YRJy6ak-AA0bn1.png	0,-1
