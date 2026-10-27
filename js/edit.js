@@ -384,7 +384,7 @@ const MAX_IMAGE_HEIGHT = 640;
             showFieldsFor(actionSelect.value);
             setStatus('success', data.applied
                 ? 'Pokyčiai išsaugoti.'
-                : 'Pasiūlymas pateiktas, pokyčiai bus matomi po admin patvirtinimo.');
+                : 'Pasiūlymas pateiktas, pokyčiai bus matomi po patvirtinimo.');
             if (!data.applied && data.pr) {
                 // same sentence, with "patvirtinimo" linking to the PR
                 const a = document.createElement('a');
@@ -393,7 +393,7 @@ const MAX_IMAGE_HEIGHT = 640;
                 a.rel = 'noopener';
                 a.textContent = 'patvirtinimo';
                 statusBox.textContent = '';
-                statusBox.append('Pasiūlymas pateiktas, pokyčiai bus matomi po admin ', a, '.');
+                statusBox.append('Pasiūlymas pateiktas, pokyčiai bus matomi po ', a, '.');
             }
         } catch (err) {
             const offline = err instanceof TypeError;
