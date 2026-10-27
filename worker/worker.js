@@ -244,6 +244,15 @@ function cleanFields(action, payload) {
             offset: cleanOffset(payload.offset),
         };
     }
+    if (action === 'rename_character') {
+        const name = cleanName(payload.name, 'name');
+        const newName = cleanName(payload.new_name, 'new name');
+        if (name === newName) throw new ValidationError('The new name is the same as the current one');
+        return { name, newName };
+    }
+    if (action === 'delete_character') {
+        return { name: cleanName(payload.name, 'name') };
+    }
     if (action === 'add_link' || action === 'remove_link' || action === 'change_link_type') {
         const source = cleanName(payload.source, 'source');
         const target = cleanName(payload.target, 'target');
@@ -323,6 +332,46 @@ async function handleSubmission(body, env) {
                 : `Nauja nuotrauka: ${name}${suffix}`,
             body: `Siūloma nauja **${name}** nuotrauka.\n\nSena: ${oldImage}\nNauja: ${image}`,
         };
+    } else if (action === 'rename_character' || action === 'delete_character') {
+        const { name } = fields;
+        requireExisting(name, 'name');
+        const links = await gh.getFile(LINKS_PATH, BASE_BRANCH);
+        const linkRows = parseRows(links.text);
+        const touches = ([s, t]) => s === name || t === name;
+        const partnerOf = ([s, t]) => (s === name ? t : s);
+        const linkList = linkRows.filter(touches)
+            .map(row => `- **${partnerOf(row)}** (${LINK_TYPES[row[2]] || row[2]})`).join('\n');
+        const files = [];
+        let newLinkRows = linkRows;
+
+        if (action === 'rename_character') {
+            const { newName } = fields;
+            if (names.has(newName)) throw new ValidationError(`Character "${newName}" already exists`);
+            pointRows.find(([n]) => n === name)[0] = newName;
+            newLinkRows = linkRows.map(([s, t, ...rest]) =>
+                [s === name ? newName : s, t === name ? newName : t, ...rest]);
+            change = {
+                slug: `${name}-${newName}`,
+                title: `Pervadinti veikėją: ${name} → ${newName}${suffix}`,
+                body: `Siūloma pervadinti veikėją **${name}** į **${newName}**.\n\n` +
+                    (linkList ? `Ryšiai, kuriuose pasikeis vardas:\n${linkList}` : 'Be ryšių.'),
+            };
+        } else {
+            pointRows.splice(pointRows.findIndex(([n]) => n === name), 1);
+            newLinkRows = linkRows.filter(row => !touches(row));
+            change = {
+                slug: name,
+                title: `Pašalinti veikėją: ${name}${suffix}`,
+                body: `Siūloma pašalinti veikėją **${name}**.\n\n` +
+                    (linkList ? `Kartu bus pašalinti ryšiai:\n${linkList}` : 'Be ryšių.'),
+            };
+        }
+
+        files.push({ path: POINTS_PATH, text: serializeRows(pointRows), base: points });
+        if (newLinkRows !== linkRows && linkRows.some(touches)) {
+            files.push({ path: LINKS_PATH, text: serializeRows(newLinkRows), base: links });
+        }
+        change.files = files;
     } else {
         const { source, target, type } = fields;
         requireExisting(source, 'source');

@@ -3,8 +3,11 @@
 Cloudflare Worker that powers the "Siūlyti pokyčius" button on the site.
 It receives edits, validates them, and handles them in one of two ways:
 
-- **New character / image change** → opens a **pull request** against
-  `gh-pages` for the owner to approve (merging publishes, closing rejects).
+- **New character / image change / rename / delete** → opens a **pull request**
+  against `gh-pages` for the owner to approve (merging publishes, closing
+  rejects). A rename rewrites the name in `Points.txt` and every `Links.txt`
+  row; a delete also removes all of the character's links (the PR body lists
+  them).
 - **Link add / retype / remove** → **commits directly** to `gh-pages`
   (no approval needed; every change is still an auditable commit that can
   be reverted from the git history).

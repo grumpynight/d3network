@@ -50,6 +50,8 @@
                     <option value="change_image">Pakeisti nuotrauką</option>
                     <option value="add_link">Pridėti / keisti ryšį</option>
                     <option value="remove_link">Pašalinti ryšį</option>
+                    <option value="rename_character">Pervadinti veikėją</option>
+                    <option value="delete_character">Pašalinti veikėją</option>
                 </select>
             </label>
 
@@ -61,7 +63,11 @@
                 <input type="text" name="character" list="character-names" placeholder="IEŠKOK...">
             </label>
 
-            <label data-field="image">Nuotraukos nuoroda <span class="edit-optional">(iki 400×640)</span>
+            <label data-field="new_name">Naujas vardas
+                <input type="text" name="new_name" maxlength="80" placeholder="VARDAS PAVARDĖ">
+            </label>
+
+            <label data-field="image">Nuotraukos nuoroda<span class="edit-optional">(iki 400×640)</span>
                 <input type="url" name="image" maxlength="500" placeholder="https://i.imgur.com/...">
             </label>
             <div data-field="image" class="edit-crop">

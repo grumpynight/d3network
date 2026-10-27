@@ -25,10 +25,14 @@ const MAX_IMAGE_HEIGHT = 640;
         change_image: ['character', 'image'],
         add_link: ['source', 'target', 'type'],
         remove_link: ['source', 'target'],
+        rename_character: ['character', 'new_name'],
+        delete_character: ['character'],
     };
 
     // Only these actions go through an approval PR; link edits apply instantly
-    const NEEDS_APPROVAL = new Set(['add_character', 'change_image']);
+    const NEEDS_APPROVAL = new Set([
+        'add_character', 'change_image', 'rename_character', 'delete_character',
+    ]);
 
     function showFieldsFor(action) {
         form.querySelectorAll('[data-field]').forEach(row => {
@@ -323,6 +327,18 @@ const MAX_IMAGE_HEIGHT = 640;
             if (node.image === payload.image && nodeOffset === payload.offset) {
                 throw new Error('Tai jau dabartinė nuotrauka');
             }
+        } else if (action === 'rename_character') {
+            const node = requireCharacter(value('character'), 'veikėjas');
+            const newName = value('new_name');
+            if (!newName) throw new Error('Įvesk naują vardą');
+            if (newName.toLowerCase() === node.name.toLowerCase()) {
+                throw new Error('Naujas vardas toks pat kaip dabartinis');
+            }
+            if (knownName(newName)) throw new Error(`Veikėjas „${newName}“ jau egzistuoja`);
+            payload.name = node.name;
+            payload.new_name = newName;
+        } else if (action === 'delete_character') {
+            payload.name = requireCharacter(value('character'), 'veikėjas').name;
         } else {
             const source = requireCharacter(value('source'), 'pirmas veikėjas');
             const target = requireCharacter(value('target'), 'antras veikėjas');
